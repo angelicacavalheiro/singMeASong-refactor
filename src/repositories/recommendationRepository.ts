@@ -1,3 +1,4 @@
+import { Interface } from "readline";
 import connection from "../database";
 
 export async function create(name: string, youtubeLink: string, score: number) {
@@ -41,11 +42,17 @@ export async function destroy(id: number) {
   );
 }
 
+interface Recommendation {
+  id: number;
+  name: string;
+  youtubeLink: string;
+  score: number;
+}
 export async function findRecommendations(
   minScore: number,
   maxScore: number = Infinity,
   orderBy: string = ""
-) {
+) : Promise<Recommendation[]> {
   let where = "";
   let params = [minScore];
 
@@ -64,5 +71,7 @@ export async function findRecommendations(
 
   const result = await connection.query(query, params);
 
-  return result.rows;
+  const recommendations: Recommendation[] = result.rows
+
+  return recommendations;
 }
